@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: template
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./mysql-init-script:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+
+  minio:
+    image: quay.io/minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ROOTNAME
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    volumes:
+      - ./data/minio:/data
+    command: server /data --console-address ":9001"
+      
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025" # Invio email (SMTP)
+      - "8025:8025" # Interfaccia web
+
+volumes:
+  mysql-data:
+  rabbitmq-data:
+  minio-data:
